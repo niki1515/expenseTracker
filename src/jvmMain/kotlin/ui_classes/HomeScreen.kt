@@ -13,7 +13,6 @@ import data_models.Expense
 import data_models.Income
 import data_models.TransactionHistory
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
@@ -33,10 +32,10 @@ class HomeScreen(
                 modifier = Modifier.fillMaxSize().padding(16.dp)
             ) {
                 Greeting()
-                CurrentBalance()
-                RecentTransactions()
+                currentBalance()
+                recentTransactions()
                 Spacer(Modifier.weight(1f))
-                NavigationButtons()
+                navigationButtons()
             }
         }
     }
@@ -54,7 +53,7 @@ class HomeScreen(
     }
 
     @Composable
-    private fun CurrentBalance() {
+    private fun currentBalance() {
         val balance = transactionHistory.getBalance()
         Box(
             modifier = Modifier
@@ -62,7 +61,7 @@ class HomeScreen(
                 .padding(bottom = 25.dp)
                 .clip(RoundedCornerShape(8.dp))
                 .height(150.dp)
-                .background(Color(0xFFC71585))
+                .background(Color(0xFF4B0082))
         ) {
             Text(
                 "${formatCurrency(balance)} Ft",
@@ -78,7 +77,7 @@ class HomeScreen(
     }
 
     @Composable
-    private fun RecentTransactions() {
+    private fun recentTransactions() {
         val latestTransactions = transactionHistory.getLatestTransactions()
         Column(modifier = Modifier.padding(start = 16.dp, end = 16.dp, top = 8.dp, bottom = 8.dp)) {
             Text(
@@ -118,12 +117,12 @@ class HomeScreen(
         }
     }
 
-    fun formatCurrency(amount: Double): String {
+    private fun formatCurrency(amount: Double): String {
         return "%,d".format(amount.toInt()).replace(',', ' ')
     }
 
     @Composable
-    private fun NavigationButtons() {
+    private fun navigationButtons() {
         Row(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.SpaceBetween

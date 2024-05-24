@@ -9,15 +9,6 @@ class TransactionHistory {
         loadTransactions()
     }
 
-    fun addTransaction(transaction: Any) {
-        transactions.add(transaction)
-        saveTransactions()
-    }
-
-    fun getLatestTransactions(limit: Int = 5): List<Any> {
-        return transactions.takeLast(limit).reversed()
-    }
-
     private fun saveTransactions() {
         file.printWriter().use { out ->
             transactions.forEach {
@@ -38,6 +29,15 @@ class TransactionHistory {
                 "Income" -> transactions.add(Income(parts[1].toDouble(), parts[2], parts[3]))
             }
         }
+    }
+
+    fun addTransaction(transaction: Any) {
+        transactions.add(transaction)
+        saveTransactions()
+    }
+
+    fun getLatestTransactions(limit: Int = 5): List<Any> {
+        return transactions.takeLast(limit).reversed()
     }
 
     fun getTotalIncome(): Double = transactions.filterIsInstance<Income>().sumOf { it.amount }

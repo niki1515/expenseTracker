@@ -16,7 +16,6 @@ import java.util.*
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowDropDown
-import androidx.compose.runtime.*
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
 import androidx.compose.ui.geometry.Offset
@@ -59,7 +58,7 @@ class AddExpenseScreen(
                 onValueChange = { expenseAmount = it },
                 label = { Text("Amount") }
             )
-            CategoryDropdown()
+            categoryDropdown()
             OutlinedTextField(
                 value = expenseDescription,
                 onValueChange = { expenseDescription = it },
@@ -75,7 +74,7 @@ class AddExpenseScreen(
                 "Total Expenses: ${formatCurrency(totalExpenses)} Ft",
                 style = TextStyle(fontWeight = FontWeight.Medium)
             )
-            PieChart(expensesByCategory, totalExpenses)
+            pieChart(expensesByCategory, totalExpenses)
             Spacer(Modifier.weight(1f))
             Button(
                 onClick = onNavigateHome,
@@ -87,17 +86,18 @@ class AddExpenseScreen(
     }
 
     @Composable
-    fun PieChart(expensesByCategory: Map<String, Double>, totalExpenses: Double) {
-        val colors = listOf(
-            Color(0xFFC71585),  //rozsaszin
-            Color(0xFF800080),  //bordos lila
-            Color(0xFF4B0082),  //sotet kekes lila
-            Color(0xFF0000CD),  //kek
-            Color(0xFFC71585),
-            Color(0xFF1E90FF),
-            Color(0xFF00CED1),
-            Color(0xFF66CDAA),
-            Color(0xFF90EE90)
+    fun pieChart(expensesByCategory: Map<String, Double>, totalExpenses: Double) {
+        // Color mapping for each category
+        val categoryColors = mapOf(
+            "groceries" to Color(0xFFE53883),  // Pink
+            "entertainment" to Color(0xFFC71585),  // Purple
+            "payment" to Color(0xFF800080),  // Dark Purple
+            "transportation" to Color(0xFF4B0082),  // Blue
+            "travels" to Color(0xFF0000CD),  // Dodger Blue
+            "health" to Color(0xFF1E90FF),  // Dark Turquoise
+            "restaurants & bars" to Color(0xFF00CED1),  // Medium Aquamarine
+            "shopping" to Color(0xFF66CDAA),  // Light Green
+            "other" to Color(0xFF90EE90)  // White Smoke for others
         )
 
         Canvas(modifier = Modifier.size(150.dp)) {
@@ -107,9 +107,10 @@ class AddExpenseScreen(
             var startAngle = 0f
 
             expensesByCategory.entries.forEachIndexed { index, entry ->
+                val color = categoryColors[entry.key] ?: Color.Gray // Use Gray as default if no color is specified for the category
                 val sweepAngle = (entry.value / totalExpenses).toFloat() * 360f
                 drawArc(
-                    color = colors[index % colors.size],
+                    color = color,
                     startAngle = startAngle,
                     sweepAngle = sweepAngle,
                     useCenter = true,
@@ -122,7 +123,20 @@ class AddExpenseScreen(
     }
 
     @Composable
-    fun CategoryDropdown() {
+    fun categoryDropdown() {
+        // Color mapping for each category
+        val categoryColors = mapOf(
+            "groceries" to Color(0xFFE53883),  // Pink
+            "entertainment" to Color(0xFFC71585),  // Purple
+            "payment" to Color(0xFF800080),  // Dark Purple
+            "transportation" to Color(0xFF4B0082),  // Blue
+            "travels" to Color(0xFF0000CD),  // Dodger Blue
+            "health" to Color(0xFF1E90FF),  // Dark Turquoise
+            "restaurants & bars" to Color(0xFF00CED1),  // Medium Aquamarine
+            "shopping" to Color(0xFF66CDAA),  // Light Green
+            "other" to Color(0xFF90EE90)  // White Smoke for others
+        )
+
         OutlinedTextField(
             value = expenseCategory,
             onValueChange = { },
@@ -144,7 +158,17 @@ class AddExpenseScreen(
                     expenseCategory = category
                     expanded = false
                 }) {
-                    Text(category)
+                    Box(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .background(categoryColors[category] ?: Color.Transparent)  // Fallback to transparent if no color is mapped
+                    ) {
+                        Text(
+                            text = category,
+                            color = if (categoryColors[category] == Color(0xFFF5F5F5)) Color.Black else Color.White,
+                            modifier = Modifier.padding(8.dp)
+                        )
+                    }
                 }
             }
         }
@@ -168,7 +192,7 @@ class AddExpenseScreen(
         expenseDescription = ""
     }
 
-    fun formatCurrency(amount: Double): String {
+    private fun formatCurrency(amount: Double): String {
         return "%,d".format(amount.toInt()).replace(',', ' ')
     }
 }

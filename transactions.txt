@@ -1,7 +1,7 @@
 Income,20000.0,pocketmoney,from mom
 Income,23000.0,other,for the doctor
 Income,20000.0,scholarship,bme
-Income,68000.0,other,árvasági
+Income,68000.0,other,utalvany
 Expense,2830.0,restaurants & bars,pad thai
 Expense,9300.0,payment,koli
 Income,40000.0,scholarship,bme
@@ -14,6 +14,4 @@ Expense,1000.0,health,laktoz tabletta
 Expense,120000.0,transportation,berlet
 Income,20000.0,scholarship,bme osztondij
 Expense,9000.0,payment,koli
-Income,4500.0,other,lillatol kajara
-Income,80000.0,pocketmoney,havi zsebpenz
-Expense,2500.0,restaurants & bars,padthai
+Income,80000.0,pocketmoney,zsebpenz

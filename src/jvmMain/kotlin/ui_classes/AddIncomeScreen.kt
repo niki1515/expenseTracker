@@ -16,7 +16,6 @@ import java.util.*
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowDropDown
-import androidx.compose.runtime.*
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
 import androidx.compose.ui.geometry.Offset
@@ -55,7 +54,7 @@ class AddIncomeScreen(
                 onValueChange = { incomeAmount = it },
                 label = { Text("Amount") }
             )
-            CategoryDropdown()
+            categoryDropdown()
             OutlinedTextField(
                 value = incomeDescription,
                 onValueChange = { incomeDescription = it },
@@ -71,7 +70,7 @@ class AddIncomeScreen(
                 "Total Income: ${formatCurrency(totalIncomes)} Ft",
                 style = TextStyle(fontWeight = FontWeight.Medium)
             )
-            PieChart(incomesByCategory, totalIncomes)
+            pieChart(incomesByCategory, totalIncomes)
             Spacer(Modifier.weight(1f))
             Button(
                 onClick = onNavigateHome,
@@ -83,7 +82,48 @@ class AddIncomeScreen(
     }
 
     @Composable
-    fun CategoryDropdown() {
+    fun pieChart(incomesByCategory: Map<String, Double>, totalIncomes: Double) {
+        // Define color mapping similar to the categoryDropdown
+        val categoryColors = mapOf(
+            "salary" to Color(0xFFC71585),  // Pink
+            "pocketmoney" to Color(0xFF800080),  // Purple
+            "scholarship" to Color(0xFF4B0082),  // Dark Purple
+            "investment" to Color(0xFF0000CD),  // Blue
+            "other" to Color(0xFF1E90FF)  // Light Blue
+        )
+
+        Canvas(modifier = Modifier.size(150.dp)) {
+            if (totalIncomes == 0.0) return@Canvas
+            val center = Offset(size.width / 2, size.height / 2)
+            val radius = size.minDimension / 2
+            var startAngle = 0f
+
+            incomesByCategory.entries.forEachIndexed { index, entry ->
+                val color = categoryColors[entry.key] ?: Color.Gray // Default to Gray if color not found
+                val sweepAngle = (entry.value / totalIncomes).toFloat() * 360f
+                drawArc(
+                    color = color,
+                    startAngle = startAngle,
+                    sweepAngle = sweepAngle,
+                    useCenter = true,
+                    topLeft = Offset(center.x - radius, center.y - radius),
+                    size = Size(radius * 2, radius * 2)
+                )
+                startAngle += sweepAngle
+            }
+        }
+    }
+
+    @Composable
+    fun categoryDropdown() {
+        val categoryColors = mapOf(
+            "salary" to Color(0xFFC71585),
+            "pocketmoney" to Color(0xFF800080),
+            "scholarship" to Color(0xFF4B0082),
+            "investment" to Color(0xFF0000CD),
+            "other" to Color(0xFF1E90FF)
+        )
+
         OutlinedTextField(
             value = incomeCategory,
             onValueChange = { },
@@ -105,39 +145,18 @@ class AddIncomeScreen(
                     incomeCategory = category
                     expanded = false
                 }) {
-                    Text(category)
+                    Box(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .background(categoryColors[category] ?: Color.Transparent)
+                    ) {
+                        Text(
+                            text = category,
+                            color = Color.White,
+                            modifier = Modifier.padding(8.dp)
+                        )
+                    }
                 }
-            }
-        }
-    }
-
-    @Composable
-    fun PieChart(incomesByCategory: Map<String, Double>, totalIncomes: Double) {
-        val colors = listOf(
-            Color(0xFFC71585),
-            Color(0xFF800080),
-            Color(0xFF4B0082),
-            Color(0xFF0000CD),
-            Color(0xFFC71585)
-        )
-
-        Canvas(modifier = Modifier.size(150.dp)) {
-            if (totalIncomes == 0.0) return@Canvas
-            val center = Offset(size.width / 2, size.height / 2)
-            val radius = size.minDimension / 2
-            var startAngle = 0f
-
-            incomesByCategory.entries.forEachIndexed { index, entry ->
-                val sweepAngle = (entry.value / totalIncomes).toFloat() * 360f
-                drawArc(
-                    color = colors[index % colors.size],
-                    startAngle = startAngle,
-                    sweepAngle = sweepAngle,
-                    useCenter = true,
-                    topLeft = Offset(center.x - radius, center.y - radius),
-                    size = Size(radius * 2, radius * 2)
-                )
-                startAngle += sweepAngle
             }
         }
     }
@@ -160,7 +179,7 @@ class AddIncomeScreen(
         incomeDescription = ""
     }
 
-    fun formatCurrency(amount: Double): String {
+    private fun formatCurrency(amount: Double): String {
         return "%,d".format(amount.toInt()).replace(',', ' ')
     }
 }
